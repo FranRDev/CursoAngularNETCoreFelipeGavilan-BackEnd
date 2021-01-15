@@ -33,18 +33,18 @@ namespace back_end.Controllers {
         }
 
         [HttpPost]
-        public void Post() {
-
+        public ActionResult Post() {
+            return NoContent();
         }
 
         [HttpPut]
-        public void Put() {
-
+        public ActionResult Put() {
+            return NoContent();
         }
 
         [HttpDelete]
-        public void Delete() {
-
+        public ActionResult Delete() {
+            return NoContent();
         }
 
     }
