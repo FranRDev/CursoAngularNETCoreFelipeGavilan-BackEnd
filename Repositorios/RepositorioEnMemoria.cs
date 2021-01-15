@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace back_end.Repositorios {
 
-    public class RepositorioEnMemoria {
+    public class RepositorioEnMemoria: IRepositorio {
 
         private List<Genero> generos;
 
