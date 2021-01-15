@@ -1,6 +1,8 @@
 ﻿using back_end.Entidades;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace back_end.Repositorios {
 
@@ -19,7 +21,8 @@ namespace back_end.Repositorios {
             return generos;
         }
 
-        public Genero ObtenerGeneroPorId(int ID) {
+        public async Task<Genero> ObtenerGeneroPorId(int ID) {
+            await Task.Delay(1);
             return generos.FirstOrDefault(generos => generos.ID == ID);
         }
 
