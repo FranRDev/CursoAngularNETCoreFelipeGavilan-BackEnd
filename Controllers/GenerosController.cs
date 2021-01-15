@@ -15,12 +15,14 @@ namespace back_end.Controllers {
         }
 
         [HttpGet]
+        [HttpGet("listado")]
+        [HttpGet("/listadogeneros")]
         public List<Genero> Get() {
             return repositorio.ObtenerGeneros();
         }
 
-        [HttpGet]
-        public ActionResult<Genero> Get(int id) {
+        [HttpGet("{id:int}/{nombre=Roberto}")]
+        public ActionResult<Genero> Get(int id, string nombre) {
             var genero = repositorio.ObtenerGeneroPorId(id);
 
             if (genero == null) {
