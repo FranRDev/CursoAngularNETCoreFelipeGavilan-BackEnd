@@ -36,6 +36,11 @@ namespace back_end.Controllers {
             .ToArray();
         }
 
+        [HttpGet("guid")]
+        public Guid ObtenerGuidWC() {
+            return repositorio.ObtenerGuid();
+        }
+
     }
 
 }
