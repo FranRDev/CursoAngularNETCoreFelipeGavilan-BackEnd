@@ -27,7 +27,11 @@ namespace back_end {
             });
             services.AddCors(options => {
                 options.AddDefaultPolicy(builder => {
-                    builder.WithOrigins(Configuration.GetValue<string>("FrontEndUrl")).AllowAnyMethod().AllowAnyHeader();
+                    builder
+                        .WithOrigins(Configuration.GetValue<string>("FrontEndUrl"))
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .WithExposedHeaders(new string[] { "Total-Registros" });
                 });
             });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();

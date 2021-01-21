@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using back_end.DTOs;
 using back_end.Entidades;
+using back_end.Utilidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace back_end.Controllers {
@@ -25,9 +27,12 @@ namespace back_end.Controllers {
             this.mapeador = mapeador;
         }
 
-        [HttpGet]
-        public async Task<List<GeneroDTO>> Get() {
-            return mapeador.Map<List<GeneroDTO>>(await contexto.Generos.ToListAsync());
+        [HttpGet] // api/generos
+        public async Task<List<GeneroDTO>> Get([FromQuery] PaginacionDTO paginacionDTO) {
+            var consultable = contexto.Generos.AsQueryable();
+            await HttpContext.InsertarParametrosPaginacionEnCabecera(consultable);
+            var generos = await consultable.OrderBy(g => g.Nombre).Paginar(paginacionDTO).ToListAsync();
+            return mapeador.Map<List<GeneroDTO>>(generos);
         }
 
         [HttpGet("{id:int}")]
