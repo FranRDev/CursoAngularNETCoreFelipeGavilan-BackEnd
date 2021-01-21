@@ -1,4 +1,6 @@
-﻿using back_end.Entidades;
+﻿using AutoMapper;
+using back_end.DTOs;
+using back_end.Entidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -13,17 +15,19 @@ namespace back_end.Controllers {
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GenerosController : ControllerBase {
 
-        private readonly ILogger<GenerosController> logger;
-        private readonly ApplicationDbContext context;
+        private readonly ILogger<GenerosController> registrador;
+        private readonly ApplicationDbContext contexto;
+        private readonly IMapper mapeador;
 
-        public GenerosController(ILogger<GenerosController> logger, ApplicationDbContext context) {
-            this.logger = logger;
-            this.context = context;
+        public GenerosController(ILogger<GenerosController> registrador, ApplicationDbContext contexto, IMapper mapeador) {
+            this.registrador = registrador;
+            this.contexto = contexto;
+            this.mapeador = mapeador;
         }
 
         [HttpGet]
-        public async Task<List<Genero>> Get() {
-            return await context.Generos.ToListAsync();
+        public async Task<List<GeneroDTO>> Get() {
+            return mapeador.Map<List<GeneroDTO>>(await contexto.Generos.ToListAsync());
         }
 
         [HttpGet("{id:int}")]
@@ -32,9 +36,9 @@ namespace back_end.Controllers {
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Genero genero) {
-            context.Add(genero);
-            await context.SaveChangesAsync();
+        public async Task<ActionResult> Post([FromBody] GeneroCreacionDTO generoCreacionDTO) {
+            contexto.Add(mapeador.Map<Genero>(generoCreacionDTO));
+            await contexto.SaveChangesAsync();
             return NoContent();
         }
 
