@@ -24,6 +24,7 @@ namespace back_end {
         public void ConfigureServices(IServiceCollection services) {
             services.AddAutoMapper(typeof(Startup));
             services.AddTransient<IAlmacenadorArchivos, AlmacenadorAzureStorage>();
+            services.AddHttpContextAccessor();
             services.AddDbContext<ApplicationDbContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("CadenaConexionBDD"));
             });
@@ -54,6 +55,8 @@ namespace back_end {
             }
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 
