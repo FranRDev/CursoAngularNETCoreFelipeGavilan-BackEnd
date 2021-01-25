@@ -18,10 +18,10 @@ namespace back_end.Controllers {
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] ActorCreacionDTO actorCreacionDTO) {
-            var actor = mapeador.Map<Actor>(actorCreacionDTO);
-            await contexto.AddAsync(actor);
-            await contexto.SaveChangesAsync();
+        public async Task<ActionResult> Post([FromForm] ActorCreacionDTO actorCreacionDTO) {
+            //var actor = mapeador.Map<Actor>(actorCreacionDTO);
+            //await contexto.AddAsync(actor);
+            //await contexto.SaveChangesAsync();
             return NoContent();
         }
 
