@@ -5,7 +5,6 @@ using back_end.Utilidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,7 +26,7 @@ namespace back_end.Controllers {
             this.mapeador = mapeador;
         }
 
-        [HttpGet] // api/generos
+        [HttpGet]
         public async Task<List<GeneroDTO>> Get([FromQuery] PaginacionDTO paginacionDTO) {
             var consultable = contexto.Generos.AsQueryable();
             await HttpContext.InsertarParametrosPaginacionEnCabecera(consultable);
@@ -63,9 +62,15 @@ namespace back_end.Controllers {
             return NoContent();
         }
 
-        [HttpDelete]
-        public ActionResult Delete() {
-            throw new NotImplementedException();
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id) {
+            var existe = await contexto.Generos.AnyAsync(g => g.ID == id);
+
+            if (!existe) { return NotFound(); }
+
+            contexto.Remove(new Genero() { ID = id });
+            await contexto.SaveChangesAsync();
+            return NoContent();
         }
 
     }
