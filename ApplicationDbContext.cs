@@ -9,6 +9,7 @@ namespace back_end {
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Actor> Actores { get; set; }
+        public DbSet<Cine> Cines { get; set; }
         public DbSet<Genero> Generos { get; set; }
 
     }

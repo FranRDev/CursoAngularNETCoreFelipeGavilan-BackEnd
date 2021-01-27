@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 
 namespace back_end {
 
@@ -23,10 +25,12 @@ namespace back_end {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             services.AddAutoMapper(typeof(Startup));
+            services.AddSingleton(provider => new MapperConfiguration(config => config.AddProfile(new PerfilesAutoMapper(provider.GetRequiredService<GeometryFactory>()))).CreateMapper());
+            services.AddSingleton(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
             services.AddTransient<IAlmacenadorArchivos, AlmacenadorAzureStorage>();
             services.AddHttpContextAccessor();
             services.AddDbContext<ApplicationDbContext>(options => {
-                options.UseSqlServer(Configuration.GetConnectionString("CadenaConexionBDD"));
+                options.UseSqlServer(Configuration.GetConnectionString("CadenaConexionBDD"), sqlServer => sqlServer.UseNetTopologySuite());
             });
             services.AddCors(options => {
                 options.AddDefaultPolicy(builder => {
