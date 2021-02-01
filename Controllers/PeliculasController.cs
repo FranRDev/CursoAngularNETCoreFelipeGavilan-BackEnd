@@ -3,6 +3,8 @@ using back_end.DTOs;
 using back_end.Entidades;
 using back_end.Utilidades;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace back_end.Controllers {
@@ -21,6 +23,14 @@ namespace back_end.Controllers {
             this.contexto = contexto;
             this.mapeador = mapeador;
             this.almacenador = almacenador;
+        }
+
+        [HttpGet("PostGet")]
+        public async Task<ActionResult<PeliculaPostGetDTO>> PostGet() {
+            return new PeliculaPostGetDTO() {
+                Cines = mapeador.Map<List<CineDTO>>(await contexto.Cines.ToListAsync()),
+                Generos = mapeador.Map<List<GeneroDTO>>(await contexto.Generos.ToListAsync())
+            };
         }
 
         [HttpPost]
