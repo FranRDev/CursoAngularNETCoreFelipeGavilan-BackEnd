@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using back_end.DTOs;
+using back_end.Entidades;
 using back_end.Utilidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
