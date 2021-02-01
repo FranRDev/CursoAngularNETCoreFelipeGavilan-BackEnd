@@ -30,6 +30,15 @@ namespace back_end.Controllers {
             return mapeador.Map<List<CineDTO>>(cines);
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<CineDTO>> Get(int id) {
+            var cine = await contexto.Cines.FirstOrDefaultAsync(g => g.ID == id);
+
+            if (cine == null) { return NotFound(); }
+
+            return mapeador.Map<CineDTO>(cine);
+        }
+
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] CineCreacionDTO cineCreacionDTO) {
             contexto.Add(mapeador.Map<Cine>(cineCreacionDTO));
