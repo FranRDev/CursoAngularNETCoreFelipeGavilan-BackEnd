@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace back_end.Controllers {
 
-    [ApiController]
     [Route("api/cines")]
+    [ApiController]
     public class CinesController : ControllerBase {
 
         private readonly IMapper mapeador;
