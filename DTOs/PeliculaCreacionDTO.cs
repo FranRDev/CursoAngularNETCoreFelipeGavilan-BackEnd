@@ -18,7 +18,7 @@ namespace back_end.DTOs {
         public DateTime FechaLanzamiento { get; set; }
         public IFormFile Poster { get; set; }
         [ModelBinder(BinderType = typeof(TypeBinder<List<ActorPeliculaCreacionDTO>>))]
-        public List<ActorPeliculaCreacionDTO> IdsActores { get; set; }
+        public List<ActorPeliculaCreacionDTO> Actores { get; set; }
         [ModelBinder(BinderType = typeof(TypeBinder<List<int>>))]
         public List<int> IdsCines { get; set; }
         [ModelBinder(BinderType = typeof(TypeBinder<List<int>>))]

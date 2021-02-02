@@ -43,6 +43,17 @@ namespace back_end.Controllers {
             return mapeador.Map<ActorDTO>(actor);
         }
 
+        [HttpPost("ObtenerPorNombre")]
+        public async Task<ActionResult<List<PeliculaActorDTO>>> ObtenerPorNombre([FromBody] string nombre) {
+            if (string.IsNullOrEmpty(nombre)) { return new List<PeliculaActorDTO>(); }
+
+            return await contexto.Actores
+                .Where(a => a.Nombre.Contains(nombre))
+                .Select(a => new PeliculaActorDTO { ID = a.ID, Nombre = a.Nombre, Foto = a.Foto })
+                .Take(5)
+                .ToListAsync();
+        }
+
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] ActorCreacionDTO actorCreacionDTO) {
             var actor = mapeador.Map<Actor>(actorCreacionDTO);

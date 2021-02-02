@@ -25,9 +25,9 @@ namespace back_end.Utilidades {
         private List<PeliculaActor> MapearPeliculasActores(PeliculaCreacionDTO peliculaCreacionDTO, Pelicula pelicula) {
             var resultado = new List<PeliculaActor>();
 
-            if (peliculaCreacionDTO.IdsActores == null) { return resultado; }
+            if (peliculaCreacionDTO.Actores == null) { return resultado; }
 
-            foreach (ActorPeliculaCreacionDTO actor in peliculaCreacionDTO.IdsActores) { resultado.Add(new PeliculaActor() { IdActor = actor.ID, Personaje = actor.Personaje }); }
+            foreach (ActorPeliculaCreacionDTO actor in peliculaCreacionDTO.Actores) { resultado.Add(new PeliculaActor() { IdActor = actor.ID, Personaje = actor.Personaje }); }
 
             return resultado;
         }
