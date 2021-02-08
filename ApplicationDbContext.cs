@@ -16,9 +16,9 @@ namespace back_end {
         public DbSet<PeliculaGenero> PeliculasGeneros { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            modelBuilder.Entity<PeliculaActor>().HasKey(x => new { x.IdPelicula, x.IdActor });
-            modelBuilder.Entity<PeliculaCine>().HasKey(x => new { x.IdPelicula, x.IdCine });
-            modelBuilder.Entity<PeliculaGenero>().HasKey(x => new { x.IdPelicula, x.IdGenero });
+            modelBuilder.Entity<PeliculaActor>().HasKey(x => new { x.PeliculaID, x.ActorID });
+            modelBuilder.Entity<PeliculaCine>().HasKey(x => new { x.PeliculaID, x.CineID });
+            modelBuilder.Entity<PeliculaGenero>().HasKey(x => new { x.PeliculaID, x.GeneroID });
 
             base.OnModelCreating(modelBuilder);
         }

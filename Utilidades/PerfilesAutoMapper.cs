@@ -27,7 +27,7 @@ namespace back_end.Utilidades {
 
             if (peliculaCreacionDTO.Actores == null) { return resultado; }
 
-            foreach (ActorPeliculaCreacionDTO actor in peliculaCreacionDTO.Actores) { resultado.Add(new PeliculaActor() { IdActor = actor.ID, Personaje = actor.Personaje }); }
+            foreach (ActorPeliculaCreacionDTO actor in peliculaCreacionDTO.Actores) { resultado.Add(new PeliculaActor() { ActorID = actor.ID, Personaje = actor.Personaje }); }
 
             return resultado;
         }
@@ -37,7 +37,7 @@ namespace back_end.Utilidades {
 
             if (peliculaCreacionDTO.IdsCines == null) { return resultado; }
 
-            foreach (int id in peliculaCreacionDTO.IdsCines) { resultado.Add(new PeliculaCine() { IdCine = id }); }
+            foreach (int id in peliculaCreacionDTO.IdsCines) { resultado.Add(new PeliculaCine() { CineID = id }); }
 
             return resultado;
         }
@@ -47,7 +47,7 @@ namespace back_end.Utilidades {
 
             if (peliculaCreacionDTO.IdsGeneros == null) { return resultado; }
 
-            foreach (int id in peliculaCreacionDTO.IdsGeneros) { resultado.Add(new PeliculaGenero() { IdGenero = id }); }
+            foreach (int id in peliculaCreacionDTO.IdsGeneros) { resultado.Add(new PeliculaGenero() { GeneroID = id }); }
 
             return resultado;
         }

@@ -14,7 +14,7 @@ namespace back_end.Utilidades {
             if (valor == ValueProviderResult.None) { return Task.CompletedTask; }
 
             try {
-                var valorDeserializado = JsonSerializer.Deserialize<T>(valor.FirstValue);
+                var valorDeserializado = JsonSerializer.Deserialize<T>(valor.FirstValue, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
                 modelBindingContext.Result = ModelBindingResult.Success(valorDeserializado);
 
             } catch (Exception) {

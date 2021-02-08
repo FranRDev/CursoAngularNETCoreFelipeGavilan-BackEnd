@@ -11,7 +11,7 @@ using back_end;
 namespace back_end.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210201181033_Peliculas")]
+    [Migration("20210208100137_Peliculas")]
     partial class Peliculas
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -119,76 +119,52 @@ namespace back_end.Migrations
 
             modelBuilder.Entity("back_end.Entidades.PeliculaActor", b =>
                 {
-                    b.Property<int>("IdPelicula")
+                    b.Property<int>("PeliculaID")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdActor")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ActorID")
+                    b.Property<int>("ActorID")
                         .HasColumnType("int");
 
                     b.Property<int>("Orden")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PeliculaID")
                         .HasColumnType("int");
 
                     b.Property<string>("Personaje")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("IdPelicula", "IdActor");
+                    b.HasKey("PeliculaID", "ActorID");
 
                     b.HasIndex("ActorID");
-
-                    b.HasIndex("PeliculaID");
 
                     b.ToTable("PeliculasActores");
                 });
 
             modelBuilder.Entity("back_end.Entidades.PeliculaCine", b =>
                 {
-                    b.Property<int>("IdPelicula")
+                    b.Property<int>("PeliculaID")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdCine")
+                    b.Property<int>("CineID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CineID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PeliculaID")
-                        .HasColumnType("int");
-
-                    b.HasKey("IdPelicula", "IdCine");
+                    b.HasKey("PeliculaID", "CineID");
 
                     b.HasIndex("CineID");
-
-                    b.HasIndex("PeliculaID");
 
                     b.ToTable("PeliculasCines");
                 });
 
             modelBuilder.Entity("back_end.Entidades.PeliculaGenero", b =>
                 {
-                    b.Property<int>("IdPelicula")
+                    b.Property<int>("PeliculaID")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdGenero")
+                    b.Property<int>("GeneroID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GeneroID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PeliculaID")
-                        .HasColumnType("int");
-
-                    b.HasKey("IdPelicula", "IdGenero");
+                    b.HasKey("PeliculaID", "GeneroID");
 
                     b.HasIndex("GeneroID");
-
-                    b.HasIndex("PeliculaID");
 
                     b.ToTable("PeliculasGeneros");
                 });
@@ -197,11 +173,15 @@ namespace back_end.Migrations
                 {
                     b.HasOne("back_end.Entidades.Actor", "Actor")
                         .WithMany("Peliculas")
-                        .HasForeignKey("ActorID");
+                        .HasForeignKey("ActorID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("back_end.Entidades.Pelicula", "Pelicula")
                         .WithMany("Actores")
-                        .HasForeignKey("PeliculaID");
+                        .HasForeignKey("PeliculaID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Actor");
 
@@ -212,11 +192,15 @@ namespace back_end.Migrations
                 {
                     b.HasOne("back_end.Entidades.Cine", "Cine")
                         .WithMany("Peliculas")
-                        .HasForeignKey("CineID");
+                        .HasForeignKey("CineID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("back_end.Entidades.Pelicula", "Pelicula")
                         .WithMany("Cines")
-                        .HasForeignKey("PeliculaID");
+                        .HasForeignKey("PeliculaID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Cine");
 
@@ -227,11 +211,15 @@ namespace back_end.Migrations
                 {
                     b.HasOne("back_end.Entidades.Genero", "Genero")
                         .WithMany("Peliculas")
-                        .HasForeignKey("GeneroID");
+                        .HasForeignKey("GeneroID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("back_end.Entidades.Pelicula", "Pelicula")
                         .WithMany("Generos")
-                        .HasForeignKey("PeliculaID");
+                        .HasForeignKey("PeliculaID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Genero");
 

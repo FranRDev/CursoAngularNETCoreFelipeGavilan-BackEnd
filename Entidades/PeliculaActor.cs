@@ -4,8 +4,8 @@ namespace back_end.Entidades {
 
     public class PeliculaActor {
 
-        public int IdPelicula { get; set; }
-        public int IdActor { get; set; }
+        public int PeliculaID { get; set; }
+        public int ActorID { get; set; }
         [StringLength(maximumLength: 100)]
         public string Personaje { get; set; }
         public int Orden { get; set; }
