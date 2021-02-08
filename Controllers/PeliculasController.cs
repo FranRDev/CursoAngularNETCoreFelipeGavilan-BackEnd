@@ -26,6 +26,21 @@ namespace back_end.Controllers {
             this.almacenador = almacenador;
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<PeliculaDTO>> Get(int id) {
+            var pelicula = await contexto.Peliculas
+                .Include(p => p.Actores).ThenInclude(a => a.Actor)
+                .Include(p => p.Cines).ThenInclude(c => c.Cine)
+                .Include(p => p.Generos).ThenInclude(g => g.Genero)
+                .FirstOrDefaultAsync(p => p.ID == id);
+
+            if (pelicula == null) { return NotFound(); }
+
+            var dto = mapeador.Map<PeliculaDTO>(pelicula);
+            dto.Actores = dto.Actores.OrderBy(a => a.Orden).ToList();
+            return dto;
+        }
+
         [HttpGet("PostGet")]
         public async Task<ActionResult<PeliculaPostGetDTO>> PostGet() {
             return new PeliculaPostGetDTO() {
