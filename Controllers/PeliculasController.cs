@@ -4,6 +4,7 @@ using back_end.Entidades;
 using back_end.Utilidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,6 +25,29 @@ namespace back_end.Controllers {
             this.contexto = contexto;
             this.mapeador = mapeador;
             this.almacenador = almacenador;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<PaginaInicioDTO>> Get() {
+            var registros = 6;
+            var hoy = DateTime.Today;
+
+            var enCartelera = await contexto.Peliculas
+                .Where(p => p.Cartelera)
+                .OrderBy(p => p.FechaLanzamiento)
+                .Take(registros)
+                .ToListAsync();
+
+            var proximosEstrenos = await contexto.Peliculas
+                .Where(p => p.FechaLanzamiento > hoy)
+                .OrderBy(p => p.FechaLanzamiento)
+                .Take(registros)
+                .ToListAsync();
+
+            return new PaginaInicioDTO() {
+                EnCartelera = mapeador.Map<List<PeliculaDTO>>(enCartelera),
+                ProximosEstrenos = mapeador.Map<List<PeliculaDTO>>(proximosEstrenos)
+            };
         }
 
         [HttpGet("{id:int}")]
