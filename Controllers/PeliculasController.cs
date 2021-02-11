@@ -96,6 +96,51 @@ namespace back_end.Controllers {
             }
         }
 
+        [HttpGet("PutGet")]
+        public async Task<ActionResult<PeliculaPutGetDTO>> PutGet(int id) {
+            var peliculaAR = await Get(id);
+            if (peliculaAR.Result is NotFoundResult) { return NotFound(); }
+
+            var pelicula = peliculaAR.Value;
+
+            var idsGenerosSeleccionados = pelicula.Generos.Select(g => g.ID).ToList();
+            var generosNoSeleccionados = await contexto.Generos.Where(g => !idsGenerosSeleccionados.Contains(g.ID)).ToListAsync();
+
+            var idsCinesSeleccionados = pelicula.Cines.Select(c => c.ID).ToList();
+            var cinesNoSeleccionados = await contexto.Cines.Where(c => !idsCinesSeleccionados.Contains(c.ID)).ToListAsync();
+
+            return new PeliculaPutGetDTO() {
+                Pelicula = pelicula,
+                GenerosSeleccionados = pelicula.Generos,
+                GenerosNoSeleccionados = mapeador.Map<List<GeneroDTO>>(generosNoSeleccionados),
+                CinesSeleccionados = pelicula.Cines,
+                CinesNoSeleccionados = mapeador.Map<List<CineDTO>>(cinesNoSeleccionados),
+                Actores = pelicula.Actores
+            };
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int id, [FromForm] PeliculaCreacionDTO peliculaCreacionDTO) {
+            var pelicula = await contexto.Peliculas
+                .Include(p => p.Actores)
+                .Include(p => p.Cines)
+                .Include(p => p.Generos)
+                .FirstOrDefaultAsync(p => p.ID == id);
+
+            if (pelicula == null) { return NotFound(); }
+
+            pelicula = mapeador.Map(peliculaCreacionDTO, pelicula);
+
+            if (peliculaCreacionDTO.Poster != null) {
+                pelicula.Poster = await almacenador.EditarArchivo(pelicula.Poster, CONTENEDOR, peliculaCreacionDTO.Poster);
+            }
+
+            EscribirOrdenActores(pelicula);
+
+            await contexto.SaveChangesAsync();
+            return NoContent();
+        }
+
     }
 
 }

@@ -46,7 +46,7 @@ namespace back_end {
                 options.Filters.Add(typeof(FiltroDeExcepcion));
             });
             services.AddSwaggerGen(c => {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "back_end", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Películas API", Version = "v1" });
             });
         }
 
@@ -55,7 +55,7 @@ namespace back_end {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "back_end v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Películas API v1"));
             }
 
             app.UseHttpsRedirection();
