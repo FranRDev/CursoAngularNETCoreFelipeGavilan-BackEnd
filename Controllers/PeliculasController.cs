@@ -96,7 +96,7 @@ namespace back_end.Controllers {
             }
         }
 
-        [HttpGet("PutGet")]
+        [HttpGet("PutGet/{id:int}")]
         public async Task<ActionResult<PeliculaPutGetDTO>> PutGet(int id) {
             var peliculaAR = await Get(id);
             if (peliculaAR.Result is NotFoundResult) { return NotFound(); }
