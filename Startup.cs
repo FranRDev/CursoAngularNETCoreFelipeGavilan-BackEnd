@@ -27,7 +27,7 @@ namespace back_end {
             services.AddAutoMapper(typeof(Startup));
             services.AddSingleton(provider => new MapperConfiguration(config => config.AddProfile(new PerfilesAutoMapper(provider.GetRequiredService<GeometryFactory>()))).CreateMapper());
             services.AddSingleton(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
-            services.AddTransient<IAlmacenadorArchivos, AlmacenadorAzureStorage>();
+            services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
             services.AddHttpContextAccessor();
             services.AddDbContext<ApplicationDbContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("CadenaConexionBDD"), sqlServer => sqlServer.UseNetTopologySuite());

@@ -34,6 +34,11 @@ namespace back_end.Controllers {
             return mapeador.Map<List<GeneroDTO>>(generos);
         }
 
+        [HttpGet("ObtenerTodos")]
+        public async Task<List<GeneroDTO>> ObtenerTodos() {
+            return mapeador.Map<List<GeneroDTO>>(await contexto.Generos.ToListAsync());
+        }
+
         [HttpGet("{id:int}")]
         public async Task<ActionResult<GeneroDTO>> Get(int id) {
             var genero = await contexto.Generos.FirstOrDefaultAsync(g => g.ID == id);

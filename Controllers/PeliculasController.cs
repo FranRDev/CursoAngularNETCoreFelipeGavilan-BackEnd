@@ -73,8 +73,35 @@ namespace back_end.Controllers {
             };
         }
 
+        [HttpGet("Filtrar")]
+        public async Task<ActionResult<List<PeliculaDTO>>> Filtrar([FromQuery] PeliculasFiltroDTO peliculasFiltroDTO) {
+            var peliculasConsultable = contexto.Peliculas.AsQueryable();
+
+            if (!string.IsNullOrEmpty(peliculasFiltroDTO.Titulo)) {
+                peliculasConsultable = peliculasConsultable.Where(p => p.Titulo.Contains(peliculasFiltroDTO.Titulo));
+            }
+
+            if (peliculasFiltroDTO.EnCartelera) {
+                peliculasConsultable = peliculasConsultable.Where(p => p.Cartelera);
+            }
+
+            if (peliculasFiltroDTO.ProximosEstrenos) {
+                var hoy = DateTime.Today;
+                peliculasConsultable = peliculasConsultable.Where(p => p.FechaLanzamiento > hoy);
+            }
+
+            if (peliculasFiltroDTO.IdGenero != 0) {
+                peliculasConsultable = peliculasConsultable.Where(p => p.Generos.Select(g => g.GeneroID).Contains(peliculasFiltroDTO.IdGenero));
+            }
+
+            await HttpContext.InsertarParametrosPaginacionEnCabecera(peliculasConsultable);
+
+            var peliculas = await peliculasConsultable.Paginar(peliculasFiltroDTO.Paginacion).ToListAsync();
+            return mapeador.Map<List<PeliculaDTO>>(peliculas);
+        }
+
         [HttpPost]
-        public async Task<ActionResult> Post([FromForm] PeliculaCreacionDTO peliculaCreacionDTO) {
+        public async Task<ActionResult<int>> Post([FromForm] PeliculaCreacionDTO peliculaCreacionDTO) {
             var pelicula = mapeador.Map<Pelicula>(peliculaCreacionDTO);
 
             if (peliculaCreacionDTO.Poster != null) {
@@ -85,7 +112,7 @@ namespace back_end.Controllers {
 
             contexto.Add(pelicula);
             await contexto.SaveChangesAsync();
-            return NoContent();
+            return pelicula.ID;
         }
 
         private static void EscribirOrdenActores(Pelicula pelicula) {
