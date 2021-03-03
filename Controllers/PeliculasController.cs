@@ -168,6 +168,20 @@ namespace back_end.Controllers {
             return NoContent();
         }
 
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id) {
+            var pelicula = await contexto.Peliculas.FirstOrDefaultAsync(g => g.ID == id);
+
+            if (pelicula == null) { return NotFound(); }
+
+            contexto.Remove(pelicula);
+            await contexto.SaveChangesAsync();
+
+            await almacenador.BorrarArchivo(pelicula.Poster, CONTENEDOR);
+
+            return NoContent();
+        }
+
     }
 
 }
