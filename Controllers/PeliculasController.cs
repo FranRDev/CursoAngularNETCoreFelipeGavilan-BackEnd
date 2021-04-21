@@ -2,32 +2,40 @@
 using back_end.DTOs;
 using back_end.Entidades;
 using back_end.Utilidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace back_end.Controllers {
 
     [Route("api/peliculas")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PeliculasController : ControllerBase {
 
         private const string CONTENEDOR = "peliculas";
 
+        private readonly UserManager<IdentityUser> administradorUsuarios;
         private readonly IAlmacenadorArchivos almacenador;
         private readonly IMapper mapeador;
         private readonly ApplicationDbContext contexto;
 
-        public PeliculasController(ApplicationDbContext contexto, IMapper mapeador, IAlmacenadorArchivos almacenador) {
+        public PeliculasController(ApplicationDbContext contexto, IMapper mapeador, IAlmacenadorArchivos almacenador, UserManager<IdentityUser> administradorUsuarios) {
+            this.administradorUsuarios = administradorUsuarios;
             this.contexto = contexto;
             this.mapeador = mapeador;
             this.almacenador = almacenador;
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<PaginaInicioDTO>> Get() {
             var registros = 6;
             var hoy = DateTime.Today;
@@ -51,6 +59,7 @@ namespace back_end.Controllers {
         }
 
         [HttpGet("{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<PeliculaDTO>> Get(int id) {
             var pelicula = await contexto.Peliculas
                 .Include(p => p.Actores).ThenInclude(a => a.Actor)
@@ -60,8 +69,25 @@ namespace back_end.Controllers {
 
             if (pelicula == null) { return NotFound(); }
 
+            var mediaVotacion = 0.0;
+            var puntuacionUsuario = 0;
+
+            if (await contexto.Votaciones.AnyAsync(v => v.PeliculaID == id)) {
+                mediaVotacion = await contexto.Votaciones.Where(v => v.PeliculaID == id).AverageAsync(v => v.Puntuacion);
+
+                if (HttpContext.User.Identity.IsAuthenticated) {
+                    var correo = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+                    var usuario = await administradorUsuarios.FindByEmailAsync(correo);
+                    var votacionActual = await contexto.Votaciones.FirstOrDefaultAsync(v => v.PeliculaID == id && v.UsuarioID == usuario.Id);
+
+                    if (votacionActual != null) { puntuacionUsuario = votacionActual.Puntuacion; }
+                }
+            }
+
             var dto = mapeador.Map<PeliculaDTO>(pelicula);
             dto.Actores = dto.Actores.OrderBy(a => a.Orden).ToList();
+            dto.PuntuacionUsuario = puntuacionUsuario;
+            dto.MediaVotacion = mediaVotacion;
             return dto;
         }
 
@@ -74,6 +100,7 @@ namespace back_end.Controllers {
         }
 
         [HttpGet("Filtrar")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<PeliculaDTO>>> Filtrar([FromQuery] PeliculasFiltroDTO peliculasFiltroDTO) {
             var peliculasConsultable = contexto.Peliculas.AsQueryable();
 

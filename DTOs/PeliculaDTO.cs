@@ -12,6 +12,8 @@ namespace back_end.DTOs {
         public bool Cartelera { get; set; }
         public DateTime FechaLanzamiento { get; set; }
         public string Poster { get; set; }
+        public double MediaVotacion { get; set; }
+        public int PuntuacionUsuario { get; set; }
 
         public List<PeliculaActorDTO> Actores { get; set; }
         public List<CineDTO> Cines { get; set; }
