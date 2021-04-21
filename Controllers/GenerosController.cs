@@ -2,6 +2,8 @@
 using back_end.DTOs;
 using back_end.Entidades;
 using back_end.Utilidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -13,7 +15,7 @@ namespace back_end.Controllers {
 
     [Route("api/generos")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
     public class GenerosController : ControllerBase {
 
         private readonly ILogger<GenerosController> registrador;
@@ -35,6 +37,7 @@ namespace back_end.Controllers {
         }
 
         [HttpGet("ObtenerTodos")]
+        [AllowAnonymous]
         public async Task<List<GeneroDTO>> ObtenerTodos() {
             return mapeador.Map<List<GeneroDTO>>(await contexto.Generos.ToListAsync());
         }

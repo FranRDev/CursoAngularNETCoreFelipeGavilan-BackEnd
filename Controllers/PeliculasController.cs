@@ -17,7 +17,7 @@ namespace back_end.Controllers {
 
     [Route("api/peliculas")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
     public class PeliculasController : ControllerBase {
 
         private const string CONTENEDOR = "peliculas";

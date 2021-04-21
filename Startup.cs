@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using System;
+using System.Security.Claims;
 using System.Text;
 
 namespace back_end {
@@ -59,6 +60,9 @@ namespace back_end {
                         ClockSkew = TimeSpan.Zero
                     };
                 });
+            services.AddAuthorization(opciones => {
+                opciones.AddPolicy("Admin", politica => politica.RequireClaim(ClaimTypes.Role, "admin"));
+            });
             services.AddControllers(options => {
                 options.Filters.Add(typeof(FiltroDeExcepcion));
             });
