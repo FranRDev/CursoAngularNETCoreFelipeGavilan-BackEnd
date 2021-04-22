@@ -92,7 +92,7 @@ namespace back_end.Controllers {
             return mapeador.Map<List<UsuarioDTO>>(usuarios);
         }
 
-        [HttpPost("AnhadirAdministrador")]
+        [HttpPost("AnhadirAdmin")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
         public async Task<ActionResult> AnhadirAdministrador([FromBody] string idUsuario) {
             var usuario = await administradorUsuarios.FindByIdAsync(idUsuario);
@@ -100,7 +100,7 @@ namespace back_end.Controllers {
             return Ok();
         }
 
-        [HttpPost("QuitarAdministrador")]
+        [HttpPost("QuitarAdmin")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
         public async Task<ActionResult> QuitarAdministrador([FromBody] string idUsuario) {
             var usuario = await administradorUsuarios.FindByIdAsync(idUsuario);

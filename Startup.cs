@@ -61,7 +61,7 @@ namespace back_end {
                     };
                 });
             services.AddAuthorization(opciones => {
-                opciones.AddPolicy("Admin", politica => politica.RequireClaim(ClaimTypes.Role, "admin"));
+                opciones.AddPolicy("Admin", politica => politica.RequireClaim(ClaimTypes.Role, "Admin"));
             });
             services.AddControllers(options => {
                 options.Filters.Add(typeof(FiltroDeExcepcion));

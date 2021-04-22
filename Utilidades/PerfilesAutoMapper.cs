@@ -16,7 +16,8 @@ namespace back_end.Utilidades {
             CreateMap<CineCreacionDTO, Cine>().ForMember(c => c.Ubicacion, c => c.MapFrom(dto => geometryFactory.CreatePoint(new Coordinate(dto.Longitud, dto.Latitud))));
             CreateMap<Genero, GeneroDTO>().ReverseMap();
             CreateMap<GeneroCreacionDTO, Genero>();
-            CreateMap<IdentityUser, UsuarioDTO>();
+            CreateMap<IdentityUser, UsuarioDTO>()
+                .ForMember(u => u.Correo, opciones => opciones.MapFrom(iu => iu.Email));
             CreateMap<Pelicula, PeliculaDTO>()
                 .ForMember(p => p.Actores, opciones => opciones.MapFrom(MapearPeliculasActores))
                 .ForMember(p => p.Cines, opciones => opciones.MapFrom(MapearPeliculasCines))
