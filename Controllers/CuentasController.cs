@@ -1,11 +1,17 @@
-﻿using back_end.DTOs;
+﻿using AutoMapper;
+using back_end.DTOs;
+using back_end.Utilidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,11 +25,16 @@ namespace back_end.Controllers {
         private readonly SignInManager<IdentityUser> administradorInicioSesion;
         private readonly UserManager<IdentityUser> administradorUsuarios;
         private readonly IConfiguration configuracion;
+        private readonly ApplicationDbContext contexto;
+        private readonly IMapper mapeador;
 
-        public CuentasController(SignInManager<IdentityUser> administradorInicioSesion, UserManager<IdentityUser> administradorUsuarios, IConfiguration configuracion) {
+        public CuentasController(SignInManager<IdentityUser> administradorInicioSesion, UserManager<IdentityUser> administradorUsuarios, IConfiguration configuracion,
+            ApplicationDbContext contexto, IMapper mapeador) {
             this.administradorInicioSesion = administradorInicioSesion;
             this.administradorUsuarios = administradorUsuarios;
             this.configuracion = configuracion;
+            this.contexto = contexto;
+            this.mapeador = mapeador;
         }
 
         [HttpPost("Crear")]
@@ -70,6 +81,31 @@ namespace back_end.Controllers {
             } else {
                 return BadRequest("Credenciales incorrectas");
             }
+        }
+
+        [HttpGet("Usuarios")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
+        public async Task<ActionResult<List<UsuarioDTO>>> ObtenerUsuarios([FromQuery] PaginacionDTO paginacionDTO) {
+            var consultable = contexto.Users.AsQueryable();
+            await HttpContext.InsertarParametrosPaginacionEnCabecera(consultable);
+            var usuarios = await consultable.OrderBy(u => u.Email).Paginar(paginacionDTO).ToListAsync();
+            return mapeador.Map<List<UsuarioDTO>>(usuarios);
+        }
+
+        [HttpPost("AnhadirAdministrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
+        public async Task<ActionResult> AnhadirAdministrador([FromBody] string idUsuario) {
+            var usuario = await administradorUsuarios.FindByIdAsync(idUsuario);
+            await administradorUsuarios.AddClaimAsync(usuario, new Claim(ClaimTypes.Role, "Admin"));
+            return Ok();
+        }
+
+        [HttpPost("QuitarAdministrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
+        public async Task<ActionResult> QuitarAdministrador([FromBody] string idUsuario) {
+            var usuario = await administradorUsuarios.FindByIdAsync(idUsuario);
+            await administradorUsuarios.RemoveClaimAsync(usuario, new Claim(ClaimTypes.Role, "Admin"));
+            return Ok();
         }
 
     }
